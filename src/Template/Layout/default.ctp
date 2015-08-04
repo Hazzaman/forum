@@ -41,6 +41,9 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
         <div class="header-help">
             <span><a target="_blank" href="http://book.cakephp.org/3.0/">Documentation</a></span>
             <span><a target="_blank" href="http://api.cakephp.org/3.0/">API</a></span>
+            <span><a href="<?= $this->Url->build(['controller' => 'generator', 'action' => 'newRecords']);?>">New Records</a></span>
+            <span><a href="<?= $this->Url->build(['controller' => 'generator', 'action' => 'delete']);?>">Delete Records</a></span>
+
         </div>
     </header>
     <div id="container">
