@@ -5,7 +5,10 @@ use App\Model\Entity\User;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 use Cake\Validation\Validator;
+
+use Constants\Roles;
 
 /**
  * Users Model
@@ -14,7 +17,7 @@ use Cake\Validation\Validator;
  */
 class UsersTable extends Table
 {
-
+    const ROLE_TABLES = ['Administrators', 'Moderators' => ['Forums']];
     /**
      * Initialize method
      *
@@ -32,7 +35,44 @@ class UsersTable extends Table
         $this->hasMany('Comments', [
             'foreignKey' => 'user_id'
         ]);
+        
+        // Roles
+        $this->hasOne('Administrators', [
+            'foreignKey' => 'user_id'
+        ]);
+        
+        $this->hasOne('Moderators', [
+            'foreignKey' => 'user_id'
+        ]);
     }
+    
+    /** TODO is this needed?
+     * Get with roles method
+     * 
+     * Wrapper function for $this->get() always including array options for the roles 
+     *
+     * @return user object including roles and their permissions
+     */
+     public function getWithRoles($primaryKey, array $options)
+     {
+        $options['contain'] = $options['contain'] + $this::ROLE_TABLES;
+        debug($options);
+        return $this->get($primaryKey, $options);
+     }
+     
+     /** TODO is this needed?
+     * Get roles method
+     *
+     * @return array containing role objects and their permissions
+     */
+     public function getRoles($primaryKey)
+     {
+        $user = $this->get($primaryKey, ['contain' => $this::ROLE_TABLES]);
+        // DONT DRY
+        $user_roles = [Roles\ADMINISTRATOR => $user->administrator, Roles\MODERATOR => $user->moderator];
+        return $user_roles;
+     }
+    
 
     /**
      * Default validation rules.
