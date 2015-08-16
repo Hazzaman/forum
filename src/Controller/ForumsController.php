@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Constants\Roles;
 
 /**
  * Forums Controller
@@ -11,6 +12,54 @@ use App\Controller\AppController;
 class ForumsController extends AppController
 {
 
+    /** TODO DRY authorization method if enough time
+     * Authorization method
+     * 
+     * @return boolean if user is authorized for the requested action
+     */
+    public function isAuthorized($user = null) 
+    {
+        
+        $user = $this->Auth->user();
+        if (!is_null($user[Roles\ADMINISTRATOR])) {
+            switch($this->request->action) {
+                case 'add':
+                case 'view':
+                case 'index':
+                case 'edit':
+                case 'delete':
+                    return true;
+                default:
+                    return false;
+            }
+        }
+        if ((!is_null($user[Roles\MODERATOR]))) {
+        
+            switch($this->request->action) {
+                case 'add':
+                case 'view':
+                case 'index':
+                    return true;
+                case 'edit':
+                    $id = intval($this->request->params['pass'][0]);
+                    return $user[Roles\MODERATOR]->isModeratingForum($id);
+                default:
+                    return false;
+            }
+        }
+        
+        
+        // Normal user authorized actions
+        switch($this->request->action) {
+            case 'add':
+            case 'view':
+            case 'index':
+                return true;
+            default:
+                return false;
+        }
+    }
+    
     /**
      * Index method
      *
@@ -48,11 +97,13 @@ class ForumsController extends AppController
         $forum = $this->Forums->newEntity();
         if ($this->request->is('post')) {
             $forum = $this->Forums->patchEntity($forum, $this->request->data);
-            if ($this->Forums->save($forum)) {
-                $this->Flash->success(__('The forum has been saved.'));
+            $moderator = $this->Forums->Moderators->newEntity([$this->Auth->user('id'), $forum->id]);
+            if ($this->Forums->save($forum) && $this->Forums->Moderators->save($moderator)) {              
+                $this->Flash->success(__('The forum has been saved and you have been made a moderator.'));
                 return $this->redirect(['action' => 'index']);
             } else {
-                $this->Flash->error(__('The forum could not be saved. Please, try again.'));
+                // TODO when moderator failes this still creates a forum. fix it
+                $this->Flash->error(__('An error has occurred. Please, try again.'));
             }
         }
         $this->set(compact('forum'));
@@ -101,5 +152,9 @@ class ForumsController extends AppController
             $this->Flash->error(__('The forum could not be deleted. Please, try again.'));
         }
         return $this->redirect(['action' => 'index']);
+    }
+    
+    public function test($id = null)
+    {
     }
 }

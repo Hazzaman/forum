@@ -15,7 +15,9 @@
 namespace App\Controller;
 
 use Cake\Controller\Controller;
-
+use Cake\Event\Event;
+use Cake\ORM\TableRegistry;
+require_once(APP . 'Model' . DS . 'Constants' . DS . 'Roles.php');
 /**
  * Application Controller
  *
@@ -37,5 +39,63 @@ class AppController extends Controller
     {
         parent::initialize();
         $this->loadComponent('Flash');
+        
+        $this->loadComponent('Auth', [
+            'authorize' => 'Controller',
+            'unauthorizedRedirect' => ['action' => 'index']
+        ]);
+        
+        // Anyone can access 'view' and 'index'
+        $this->Auth->allow(['view', 'index']);
+        
+        
+        // Add role data for the user to Auth->user array if user logged in
+        if (!is_null($this->Auth->user())) {
+            $user_array = $this->Auth->user();
+            $users = TableRegistry::get('users');
+            $roles = $users->getRoles($user_array['id']);
+            
+            $user_array = $user_array + $roles;
+            
+            $this->Auth->setUser($user_array);
+        }
+        
+    }
+    
+    /**
+     * Authorization method
+     * 
+     * @return boolean if user is authorized for the requested action
+     */
+    public function isAuthorized($user = null) 
+    {
+        return false;
+    }
+    
+    /**
+     * 
+     * 
+     */
+    public function authCheck($role_data, $executable, $valid_actions, $action = null)
+    {
+        if (is_null($action)) {
+            $action = $this->request->action;
+        }
+        
+        if ($executable($role_data)) {
+            return in_array($action, $valid_actions);
+        }
+    }
+    
+    /**
+     * Before Rendering hook method.
+     *
+     * Gives the logged in user to the view.
+     *
+     * @return void
+     */
+    public function beforeRender(Event $event) 
+    {
+        $this->set('userData', $this->Auth->user());
     }
 }

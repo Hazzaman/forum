@@ -2,7 +2,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
-
+use Constants\Roles;
 /**
  * Users Controller
  *
@@ -10,6 +10,66 @@ use App\Controller\AppController;
  */
 class UsersController extends AppController
 {
+    /**
+     * Initialization hook method.
+     *
+     * @return void
+     */
+    public function initialize()
+    {
+        parent::initialize();
+        
+        // Deny public access
+        $this->Auth->deny('index');
+        
+        $this->Auth->allow('add');
+        
+        $this->Auth->config('unauthorizedRedirect', [
+            'controller' => 'forums', 'action' => 'index'
+        ]);
+    }
+    
+    /**
+     * Authorization method
+     * 
+     * @return boolean if user is authorized for the requested action
+     */
+    public function isAuthorized($user = null) 
+    {
+        $user = $this->Auth->user();
+        
+        if (!is_null($user[Roles\ADMINISTRATOR])) {
+            switch($this->request->action) {
+                case 'login':
+                case 'logout':
+                case 'view':
+                case 'index':
+                case 'add':
+                case 'edit':
+                case 'delete':
+                    return true;
+                default:
+                    return false;
+            }
+        }
+        
+        // TODO user must be able to edit their own profile
+        switch($this->request->action) {
+            case 'login':
+            case 'logout':
+            case 'view':
+                return true;
+            case 'edit':
+                if ($this->Auth->user('id') === intval($this->request->params['pass'][0])) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            default:
+                return false;
+        }
+    }
 
     /**
      * Index method
@@ -31,9 +91,15 @@ class UsersController extends AppController
      */
     public function view($id = null)
     {
+        // $user = $this->Users->get($id, [
+            // 'contain' => ['Comments', 'Administrators', 'Moderators' => ['Forums']]
+        // ]);
+        
         $user = $this->Users->get($id, [
-            'contain' => ['Comments']
+            'contain' => ['Comments', 'Administrators', 'Moderators' => ['Forums']]
         ]);
+        
+        #debug($user);
         $this->set('user', $user);
         $this->set('_serialize', ['user']);
     }
@@ -101,5 +167,39 @@ class UsersController extends AppController
             $this->Flash->error(__('The user could not be deleted. Please, try again.'));
         }
         return $this->redirect(['action' => 'index']);
+    }
+    
+    /**
+     * Login method
+     * 
+     * Based on sample login from http://book.cakephp.org/3.0/en/controllers/components/authentication.html
+     */
+    
+    public function login()
+    {
+        if ($this->request->is('post')) {
+            $user = $this->Auth->identify();
+            if ($user) {
+                $this->Auth->setUser($user);
+                return $this->redirect($this->Auth->redirectUrl());
+            } else {
+                $this->Flash->error(
+                    __('Username or password is incorrect'),
+                    'default',
+                    [],
+                    'auth'
+                );
+            }
+        }
+    }
+    
+    /**
+     * Logout method
+     * 
+     */
+    
+    public function logout()
+    {
+        return $this->redirect($this->Auth->logout());
     }
 }
