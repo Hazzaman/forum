@@ -6,6 +6,8 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use App\Model\Listeners;
+
 
 /**
  * Comments Model
@@ -29,7 +31,13 @@ class CommentsTable extends Table
         $this->table('comments');
         $this->displayField('id');
         $this->primaryKey('id');
-        $this->addBehavior('Timestamp');
+        $this->addBehavior('Timestamp',[
+            'events' => [
+                'Model.beforeSave' => [
+                    'created' => 'new'
+                 ]
+            ]
+        ]);
         $this->belongsTo('Threads', [
             'foreignKey' => 'thread_id',
             'joinType' => 'INNER'
@@ -38,6 +46,7 @@ class CommentsTable extends Table
             'foreignKey' => 'user_id',
             'joinType' => 'INNER'
         ]);
+        $this->eventManager()->on(new Listeners\ModifiedCheck());
     }
 
     /**
@@ -72,4 +81,22 @@ class CommentsTable extends Table
         $rules->add($rules->existsIn(['user_id'], 'Users'));
         return $rules;
     }
+    
+    /** OLD ** switching to event listeners
+     * Overriding parents save
+     * 
+     * Returns parent::save value
+     *
+    public function save(Entity $entity) {
+        $status = parent::save($entity, $options);
+        if ($status) {
+            $event = new Event('Model.Comments.modifiedText');
+            debug($this->text);
+            debug($entity->text);
+            #debug($this->text);
+        }
+        
+        return $status;
+    }
+    */
 }
