@@ -32,6 +32,10 @@ class ForumsTable extends Table
         $this->hasMany('Threads', [
             'foreignKey' => 'forum_id'
         ]);
+        
+        $this->hasMany('Moderators', [
+            'foreignKey' => 'forum_id'
+        ]);
     }
 
     /**
