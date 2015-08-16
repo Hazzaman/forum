@@ -20,10 +20,9 @@
     <?php foreach ($forums as $forum): ?>
         <tr>
             <td><?= $this->Number->format($forum->id) ?></td>
-            <td><?= h($forum->title) ?></td>
+            <td><?= $this->Html->link(__($forum->title), ['action' => 'view', $forum->id]) ?></td>
             <td><?= h($forum->created) ?></td>
             <td class="actions">
-                <?= $this->Html->link(__('View'), ['action' => 'view', $forum->id]) ?>
                 <?= $this->Html->link(__('Edit'), ['action' => 'edit', $forum->id]) ?>
                 <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $forum->id], ['confirm' => __('Are you sure you want to delete # {0}?', $forum->id)]) ?>
             </td>

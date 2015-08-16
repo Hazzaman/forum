@@ -18,7 +18,7 @@
             <h6 class="subheader"><?= __('Thread') ?></h6>
             <p><?= $comment->has('thread') ? $this->Html->link($comment->thread->title, ['controller' => 'Threads', 'action' => 'view', $comment->thread->id]) : '' ?></p>
             <h6 class="subheader"><?= __('User') ?></h6>
-            <p><?= $comment->has('user') ? $this->Html->link($comment->user->id, ['controller' => 'Users', 'action' => 'view', $comment->user->id]) : '' ?></p>
+            <p><?= $comment->has('user') ? $this->Html->link($comment->user->username, ['controller' => 'Users', 'action' => 'view', $comment->user->id]) : '' ?></p>
             <h6 class="subheader"><?= __('Text') ?></h6>
             <p><?= h($comment->text) ?></p>
         </div>

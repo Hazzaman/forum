@@ -25,9 +25,10 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
         <?= $this->fetch('title') ?>
     </title>
     <?= $this->Html->meta('icon') ?>
-
+    <?= $this->Html->css('styles.css') ?>
     <?= $this->Html->css('base.css') ?>
     <?= $this->Html->css('cake.css') ?>
+    
 
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
@@ -43,13 +44,25 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
             <span><a target="_blank" href="http://api.cakephp.org/3.0/">API</a></span>
             <span><a href="<?= $this->Url->build(['controller' => 'generator', 'action' => 'newRecords']);?>">New Records</a></span>
             <span><a href="<?= $this->Url->build(['controller' => 'generator', 'action' => 'delete']);?>">Delete Records</a></span>
-
+            
+            <?php if (isset($userData)) { ?>
+            <span id="user-profile-link">
+                <?= $this->Html->link($userData['username'], ['controller' => 'Users', 'action' => 'view', $userData['id']]); ?> <br/>
+                <?= $this->Html->link('Logout', ['controller' => 'Users', 'action' => 'logout']); ?>
+            </span>
+            <?php } else {?>
+            <span id="user-login-links">
+                <?= $this->Html->link('Login', ['controller' => 'Users', 'action' => 'login']); ?> <br /> <br />
+                <?= $this->Html->link('Register', ['controller' => 'Users', 'action' => 'add']); ?>
+            </span>
+            <?php } ?>
         </div>
     </header>
     <div id="container">
 
         <div id="content">
             <?= $this->Flash->render() ?>
+            <?= $this->Flash->render('auth') ?>
 
             <div class="row">
                 <?= $this->fetch('content') ?>

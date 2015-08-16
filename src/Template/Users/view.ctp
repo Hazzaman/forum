@@ -19,6 +19,13 @@
             <p><?= h($user->password) ?></p>
             <h6 class="subheader"><?= __('Email') ?></h6>
             <p><?= h($user->email) ?></p>
+            
+            <?php if (!is_null($user->administrator)): ?>
+                <span class="subheader">Administrator</span>
+            <?php endif; ?>
+            <?php if (!is_null($user->moderator)): ?>
+                <span class="subheader">Moderator</span>
+            <?php endif; ?>
         </div>
         <div class="large-2 columns numbers end">
             <h6 class="subheader"><?= __('Id') ?></h6>
@@ -28,6 +35,7 @@
             <h6 class="subheader"><?= __('Created') ?></h6>
             <p><?= h($user->created) ?></p>
         </div>
+        
     </div>
 </div>
 <div class="related row">
@@ -65,6 +73,23 @@
 
         <?php endforeach; ?>
     </table>
+    <?php endif; ?>
+    <?php if (!is_null($user->moderator)): ?>
+        <h4 class="subheader"><?= __('Moderating Forums') ?></h4>
+        <table cellpadding="0" cellspacing="0">
+            <tr>
+                <th><?= __('Forum Id') ?></th>
+                <th><?= __('Title') ?></th>
+                <th><?= __('Created') ?></th>
+            </tr>
+            <?php foreach ($user->moderator->forums as $forum): ?>
+                <tr>
+                  <td><?= h($forum->id) ?></td>
+                  <td> <?= $this->Html->link(__($forum->title), ['controller' => 'Forum', 'action' => 'view', $forum->id]) ?></td>
+                  <td><?= h($forum->created) ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
     <?php endif; ?>
     </div>
 </div>
