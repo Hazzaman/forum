@@ -57,18 +57,19 @@ FOREIGN KEY (user_id) REFERENCES users(id)
 
 CREATE TABLE moderators
 (
+moderator_id INT NOT NULL AUTO_INCREMENT,
 user_id INT NOT NULL,
-PRIMARY KEY (user_id),
+PRIMARY KEY (moderator_id),
 FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE moderators_forums
 (
 id INT NOT NULL AUTO_INCREMENT,
-user_id INT NOT NULL,
+moderator_id INT NOT NULL,
 forum_id INT NOT NULL,
 PRIMARY KEY (id),
-FOREIGN KEY (user_id) REFERENCES moderators(user_id),
+FOREIGN KEY (moderator_id) REFERENCES moderators(moderator_id),
 FOREIGN KEY (forum_id) REFERENCES forums(id)
 );
 
