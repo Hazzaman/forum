@@ -30,10 +30,13 @@ class ForumsTable extends Table
         $this->primaryKey('id');
         $this->addBehavior('Timestamp');
         $this->hasMany('Threads', [
+            'dependent' => true,
+            'cascadeCallbacks' => true,
             'foreignKey' => 'forum_id'
         ]);
         
-        $this->hasMany('Moderators', [
+        $this->hasMany('ModeratorsForums', [
+            'dependent' => true,
             'foreignKey' => 'forum_id'
         ]);
     }

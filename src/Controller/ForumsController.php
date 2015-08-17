@@ -81,7 +81,7 @@ class ForumsController extends AppController
     public function view($id = null)
     {
         $forum = $this->Forums->get($id, [
-            'contain' => ['Threads']
+            'contain' => ['Threads', 'Moderators']
         ]);
         $this->set('forum', $forum);
         $this->set('_serialize', ['forum']);
@@ -97,12 +97,13 @@ class ForumsController extends AppController
         $forum = $this->Forums->newEntity();
         if ($this->request->is('post')) {
             $forum = $this->Forums->patchEntity($forum, $this->request->data);
-            $moderator = $this->Forums->Moderators->newEntity([$this->Auth->user('id'), $forum->id]);
+            $moderator = $this->Forums->Moderators->newEntity([$this->Auth->user('id'), 7]);
+            debug($moderator);
             if ($this->Forums->save($forum) && $this->Forums->Moderators->save($moderator)) {              
                 $this->Flash->success(__('The forum has been saved and you have been made a moderator.'));
                 return $this->redirect(['action' => 'index']);
             } else {
-                // TODO when moderator failes this still creates a forum. fix it
+                $this->Forums->delete($forum);
                 $this->Flash->error(__('An error has occurred. Please, try again.'));
             }
         }

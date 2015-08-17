@@ -1,4 +1,5 @@
 <?= $this->assign('title', 'Forum'); ?>
+</div>
 <div class="actions columns large-2 medium-3">
     <h3><?= __('Actions') ?></h3>
     <ul class="side-nav">
@@ -61,3 +62,9 @@
     <?php endif; ?>
     </div>
 </div>
+<div class="moderators">
+<h4 class="subheader">Moderators</h4>
+<?php debug($forum) ?>
+<?php foreach ($forum->moderators_forums as $moderator):?>
+    <span><?= $this->Html->link($moderator->user->username, ['controller' => 'Users', 'action' => 'view', $moderator->user->id]) ?></span>
+<?php endforeach; ?>
