@@ -1,19 +1,19 @@
 <?php
 namespace App\Model\Table;
 
-use App\Model\Entity\Moderator;
+use App\Model\Entity\ModeratorsForum;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * Moderators Model
+ * ModeratorsForums Model
  *
  * @property \Cake\ORM\Association\BelongsTo $Users
- * @property \Cake\ORM\Association\BelongsToMany $Forums
+ * @property \Cake\ORM\Association\BelongsTo $Forums
  */
-class ModeratorsTable extends Table
+class ModeratorsForumsTable extends Table
 {
 
     /**
@@ -26,20 +26,32 @@ class ModeratorsTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('moderators');
-        $this->displayField('user_id');
-        $this->primaryKey('user_id');
-        $this->belongsTo('Users', [
-            'foreignKey' => 'user_id',
+        $this->table('moderators_forums');
+        $this->displayField('id');
+        $this->primaryKey('id');
+        $this->belongsTo('Moderators', [
+            'foreignKey' => 'moderator_id',
             'joinType' => 'INNER'
         ]);
-        // TODO when a moderator's forums are retreived they get a lot of extra data from the forum
-        // TODO dependant?
-        $this->belongsToMany('Forums', [
-            'foreignKey' => 'moderator_id',
-            'targetForeignKey' => 'forum_id',
-            'joinTable' => 'moderators_forums'
+        $this->belongsTo('Forums', [
+            'foreignKey' => 'forum_id',
+            'joinType' => 'INNER'
         ]);
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->add('id', 'valid', ['rule' => 'numeric'])
+            ->allowEmpty('id', 'create');
+
+        return $validator;
     }
 
     /**
