@@ -35,6 +35,7 @@ class ThreadsTable extends Table
             'joinType' => 'INNER'
         ]);
         $this->hasMany('Comments', [
+            'dependent' => true,
             'foreignKey' => 'thread_id'
         ]);
     }
