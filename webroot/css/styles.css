@@ -1,0 +1,11 @@
+.comment_header {
+  margin-bottom: 20px;
+}
+
+.comment_time {
+  float: right;
+}
+
+#user-profile-link {
+  background-color: #A70000;
+}
