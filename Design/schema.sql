@@ -70,6 +70,7 @@ moderator_id INT NOT NULL,
 forum_id INT NOT NULL,
 PRIMARY KEY (id),
 FOREIGN KEY (moderator_id) REFERENCES moderators(moderator_id),
-FOREIGN KEY (forum_id) REFERENCES forums(id)
+FOREIGN KEY (forum_id) REFERENCES forums(id),
+UNIQUE (moderator_id, forum_id)
 );
 
