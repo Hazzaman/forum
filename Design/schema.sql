@@ -74,3 +74,9 @@ FOREIGN KEY (forum_id) REFERENCES forums(id),
 UNIQUE (moderator_id, forum_id)
 );
 
+-- Create initial admin user. Password is 'password'
+INSERT INTO users (username, password, email, created)
+VALUES ('admin', '$2y$10$l.M62tJ62ruuf7/LLFV2zOhujeYbnWsPzrQzdIaJmtncUtNPY98Jq', 'admin@gmail.com', '2015-08-23');
+
+INSERT INTO administrators
+VALUES (1);
