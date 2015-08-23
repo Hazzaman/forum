@@ -5,17 +5,12 @@ use App\Controller\AppController;
 use Constants\Roles;
 
 /**
- * Comments Controller
+ * Moderators Controller
  *
- * @property \App\Model\Table\CommentsTable $Comments
+ * @property \App\Model\Table\ModeratorsTable $Moderators
  */
-class CommentsController extends AppController
+class ModeratorsController extends AppController
 {
-
-    public $paginate = [
-        'sort' => 'id',
-        'direction' => 'desc',
-    ];
 
     /**
      * Initialization hook method.
@@ -151,13 +146,10 @@ class CommentsController extends AppController
     {
         $comment = $this->Comments->newEntity();
         $thread = $this->Comments->Threads->get($thread_id);
-        
-        $comment->thread_id = $thread->id;
-        
+        $comment->thread_id = $thread_id;
         
         if ($this->request->is('post')) {
             $comment = $this->Comments->patchEntity($comment, $this->request->data);
-            $comment->user_id = $this->Auth->user('id');
             
             if ($this->Comments->save($comment)) {
                 $this->Flash->success(__('The comment has been saved.'));
@@ -166,7 +158,9 @@ class CommentsController extends AppController
                 $this->Flash->error(__('The comment could not be saved. Please, try again.'));
             }
         }
-        $this->set(compact('comment', 'thread'));
+        $threads = $this->Comments->Threads->find('list', ['limit' => 200]);
+        $users = $this->Comments->Users->find('list', ['limit' => 200]);
+        $this->set(compact('comment', 'threads', 'users'));
         $this->set('_serialize', ['comment']);
     }
 
@@ -180,7 +174,7 @@ class CommentsController extends AppController
     public function edit($id = null)
     {
         $comment = $this->Comments->get($id, [
-            'contain' => ['Threads']
+            'contain' => []
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $comment = $this->Comments->patchEntity($comment, $this->request->data);
@@ -191,7 +185,9 @@ class CommentsController extends AppController
                 $this->Flash->error(__('The comment could not be saved. Please, try again.'));
             }
         }
-        $this->set(compact('comment'));
+        $threads = $this->Comments->Threads->find('list', ['limit' => 200]);
+        $users = $this->Comments->Users->find('list', ['limit' => 200]);
+        $this->set(compact('comment', 'threads', 'users'));
         $this->set('_serialize', ['comment']);
     }
 
@@ -206,15 +202,11 @@ class CommentsController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $comment = $this->Comments->get($id);
-        $thread_id = $comment->thread_id;
         if ($this->Comments->delete($comment)) {
             $this->Flash->success(__('The comment has been deleted.'));
         } else {
             $this->Flash->error(__('The comment could not be deleted. Please, try again.'));
         }
-
-        return $this->redirect([
-            'controller' => 'threads', 'action' => 'view', $thread_id
-        ]);
+        return $this->redirect(['action' => 'index']);
     }
 }

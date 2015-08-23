@@ -17,5 +17,7 @@ class Comment extends Entity
     protected $_accessible = [
         '*' => true,
         'id' => false,
+        'thread_id' => false,
+        'user_id' => false
     ];
 }

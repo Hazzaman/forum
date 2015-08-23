@@ -17,7 +17,7 @@ use Constants\Roles;
  */
 class UsersTable extends Table
 {
-    const ROLE_TABLES = ['Administrators', 'Moderators' => ['Forums']];
+    const ROLE_TABLES = ['Administrators', 'Moderators' => ['ModeratorsForums' => ['Forums']]];
     /**
      * Initialize method
      *
@@ -33,32 +33,22 @@ class UsersTable extends Table
         $this->primaryKey('id');
         $this->addBehavior('Timestamp');
         $this->hasMany('Comments', [
+            'dependent' => true,
             'foreignKey' => 'user_id'
         ]);
         
         // Roles
         $this->hasOne('Administrators', [
+            'dependent' => true,
             'foreignKey' => 'user_id'
         ]);
         
         $this->hasOne('Moderators', [
+            'dependent' => true,
+            'cascadeCallbacks' => true,
             'foreignKey' => 'user_id'
         ]);
     }
-    
-    /** TODO is this needed?
-     * Get with roles method
-     * 
-     * Wrapper function for $this->get() always including array options for the roles 
-     *
-     * @return user object including roles and their permissions
-     */
-     public function getWithRoles($primaryKey, array $options)
-     {
-        $options['contain'] = $options['contain'] + $this::ROLE_TABLES;
-        debug($options);
-        return $this->get($primaryKey, $options);
-     }
      
      /** TODO is this needed?
      * Get roles method
@@ -70,6 +60,7 @@ class UsersTable extends Table
         $user = $this->get($primaryKey, ['contain' => $this::ROLE_TABLES]);
         // DONT DRY
         $user_roles = [Roles\ADMINISTRATOR => $user->administrator, Roles\MODERATOR => $user->moderator];
+        #debug($user_roles);
         return $user_roles;
      }
     

@@ -12,7 +12,7 @@
     </ul>
 </div>
 <div class="comments view large-10 medium-9 columns">
-    <h2><?= h($comment->id) ?></h2>
+    <br/>
     <div class="row">
         <div class="large-5 columns strings">
             <h6 class="subheader"><?= __('Thread') ?></h6>
@@ -22,10 +22,12 @@
             <h6 class="subheader"><?= __('Text') ?></h6>
             <p><?= h($comment->text) ?></p>
         </div>
-        <div class="large-2 columns numbers end">
-            <h6 class="subheader"><?= __('Id') ?></h6>
-            <p><?= $this->Number->format($comment->id) ?></p>
-        </div>
+        <?php if ($is_administrator): ?>
+            <div class="large-2 columns numbers end">
+                <h6 class="subheader"><?= __('Id') ?></h6>
+                <p><?= $this->Number->format($comment->id) ?></p>
+            </div>
+        <?php endif; ?>
         <div class="large-2 columns dates end">
             <h6 class="subheader"><?= __('Created') ?></h6>
             <p><?= h($comment->created) ?></p>

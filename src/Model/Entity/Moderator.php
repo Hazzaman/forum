@@ -2,7 +2,6 @@
 namespace App\Model\Entity;
 
 use Cake\ORM\Entity;
-
 /**
  * Moderator Entity.
  */
@@ -26,8 +25,8 @@ class Moderator extends Entity
      */
     public function isModeratingForum($id)
     {
-        foreach ($this->forums as $forum) {
-            if ($forum->id === $id) {
+        foreach ($this->moderators_forums as $forum_rel) {
+            if ($forum_rel->forum_id === $id) {
                 return true;
             }
         }

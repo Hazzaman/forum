@@ -49,7 +49,7 @@
         <tr>            
             <td class="comment">
                 <?=h($comments->id);?>
-                <span class="comment_header"><?=$this->Html->link($userdata[$comments->user_id]['username'], ['controller' => 'Users', 'action' => 'view', $comments->user_id])?>
+                <span class="comment_header"><?=$this->Html->link($usernames[$comments->user_id]['username'], ['controller' => 'Users', 'action' => 'view', $comments->user_id])?>
                     <span class="comment_time">
                         <b>Created: </b><?=h($comments->created);?>
                         <?php echo ($comments->modified ? '<b>Modified: </b>' . h($comments->modified) : null);?>
@@ -59,7 +59,7 @@
                 <div class="actions">
                     <?= $this->Html->link(__('View'), ['controller' => 'Comments', 'action' => 'view', $comments->id]) ?>
                     
-                    <?php if(($comments->user_id === $userData['id']) || $is_moderator === true) {?>
+                    <?php if(($comments->user_id === $userData['id']) || $is_moderator || $is_administrator) {?>
                         <?= $this->Html->link(__('Edit'), ['controller' => 'Comments', 'action' => 'edit', $comments->id]) ?>
 
                         <?= $this->Form->postLink(__('Delete'), ['controller' => 'Comments', 'action' => 'delete', $comments->id], ['confirm' => __('Are you sure you want to delete # {0}?', $comments->id)]) ?>

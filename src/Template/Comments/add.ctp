@@ -10,19 +10,17 @@
     </ul>
 </div>
 
-<?= $this->element('Comments/add/form'); ?>
-<!--
+<!--<?= $this->element('Comments/add/form'); ?>-->
+
 <div class="comments form large-10 medium-9 columns">
     <?= $this->Form->create($comment) ?>
     <fieldset>
+        <h5 class="subheader">Thread: <?= $thread->title ?></h5>
         <legend><?= __('Add Comment') ?></legend>
         <?php
-            echo $this->Form->input('thread_id', ['options' => $threads]);
-            echo $this->Form->input('user_id', ['options' => $users]);
             echo $this->Form->input('text');
         ?>
     </fieldset>
     <?= $this->Form->button(__('Submit')) ?>
     <?= $this->Form->end() ?>
 </div>
--->

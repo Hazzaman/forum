@@ -10,6 +10,15 @@ use Constants\Roles;
  */
 class UsersController extends AppController
 {
+
+    public $paginate = [
+        'sort' => 'id',
+        'direction' => 'desc',
+        'fields' => [
+            'id', 'username', 'email', 'created'
+        ]
+    ];
+
     /**
      * Initialization hook method.
      *
@@ -37,7 +46,7 @@ class UsersController extends AppController
     public function isAuthorized($user = null) 
     {
         $user = $this->Auth->user();
-        
+        #debug($user);
         if (!is_null($user[Roles\ADMINISTRATOR])) {
             switch($this->request->action) {
                 case 'login':
@@ -96,10 +105,9 @@ class UsersController extends AppController
         // ]);
         
         $user = $this->Users->get($id, [
-            'contain' => ['Comments', 'Administrators', 'Moderators' => ['Forums']]
+            'contain' => ['Comments', 'Administrators', 'Moderators' => ['ModeratorsForums' => ['Forums']]]
         ]);
         
-        #debug($user);
         $this->set('user', $user);
         $this->set('_serialize', ['user']);
     }
@@ -113,12 +121,18 @@ class UsersController extends AppController
     {
         $user = $this->Users->newEntity();
         if ($this->request->is('post')) {
-            $user = $this->Users->patchEntity($user, $this->request->data);
-            if ($this->Users->save($user)) {
-                $this->Flash->success(__('The user has been saved.'));
-                return $this->redirect(['action' => 'index']);
-            } else {
-                $this->Flash->error(__('The user could not be saved. Please, try again.'));
+            if ($this->request->data['password_confirm'] === $this->request->data['password']) {
+
+                $user = $this->Users->patchEntity($user, $this->request->data);
+                if ($this->Users->save($user)) {
+                    $this->Flash->success(__('The user has been saved.'));
+                    return $this->redirect(['controller' => 'Forums', 'action' => 'index']);
+                } else {
+                    $this->Flash->error(__('The user could not be saved. Please, try again.'));
+                }
+            }
+            else {
+                $this->Flash->error(__('The passwords do not match.'));
             }
         }
         $this->set(compact('user'));
@@ -138,12 +152,21 @@ class UsersController extends AppController
             'contain' => []
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $user = $this->Users->patchEntity($user, $this->request->data);
-            if ($this->Users->save($user)) {
-                $this->Flash->success(__('The user has been saved.'));
-                return $this->redirect(['action' => 'index']);
-            } else {
-                $this->Flash->error(__('The user could not be saved. Please, try again.'));
+            if ($this->request->data['password_confirm'] === $this->request->data['password']) {
+
+                $user = $this->Users->patchEntity($user, $this->request->data);
+                if ($this->Users->save($user)) {
+
+                    $user_id = $user->id; // For redirect
+
+                    $this->Flash->success(__('The user has been saved.'));
+                    return $this->redirect(['action' => 'view', $user_id]);
+                } else {
+                    $this->Flash->error(__('The user could not be saved. Please, try again.'));
+                }
+            }
+            else {
+                $this->Flash->error(__('The passwords do not match.'));
             }
         }
         $this->set(compact('user'));

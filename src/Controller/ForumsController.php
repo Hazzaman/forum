@@ -3,7 +3,9 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 use Constants\Roles;
-
+use Cake\ORM\TableRegistry;
+use Cake\Datasource\Exception;
+use Cake\Datasource\ConnectionManager;
 /**
  * Forums Controller
  *
@@ -11,6 +13,24 @@ use Constants\Roles;
  */
 class ForumsController extends AppController
 {
+
+    public $paginate = [
+        'sort' => 'id',
+        'direction' => 'desc',
+    ];
+
+    /**
+     * Initialization hook method.
+     * 
+     * @return void
+     */
+
+    public function initialize()
+    {
+        parent::initialize();
+         
+
+    }
 
     /** TODO DRY authorization method if enough time
      * Authorization method
@@ -67,6 +87,7 @@ class ForumsController extends AppController
      */
     public function index()
     {
+            
         $this->set('forums', $this->paginate($this->Forums));
         $this->set('_serialize', ['forums']);
     }
@@ -81,8 +102,18 @@ class ForumsController extends AppController
     public function view($id = null)
     {
         $forum = $this->Forums->get($id, [
-            'contain' => ['Threads', 'Moderators']
+            'contain' => ['Threads', 'ModeratorsForums' => ['Moderators' => ['Users']]]
         ]);
+        
+        //TODO isn't this a function?
+        $user = $this->Auth->user();
+        if (isset($user[Roles\MODERATOR]) && $user[Roles\MODERATOR]->isModeratingForum($forum->id)) {
+            $this->set('is_moderator', true);
+        }
+        else {
+            $this->set('is_moderator', false);
+        }
+
         $this->set('forum', $forum);
         $this->set('_serialize', ['forum']);
     }
@@ -97,18 +128,43 @@ class ForumsController extends AppController
         $forum = $this->Forums->newEntity();
         if ($this->request->is('post')) {
             $forum = $this->Forums->patchEntity($forum, $this->request->data);
-            $moderator = $this->Forums->Moderators->newEntity([$this->Auth->user('id'), 7]);
-            debug($moderator);
-            if ($this->Forums->save($forum) && $this->Forums->Moderators->save($moderator)) {              
-                $this->Flash->success(__('The forum has been saved and you have been made a moderator.'));
-                return $this->redirect(['action' => 'index']);
+            // TODO DRY this code and needs separation of concerns
+            if (!is_null($this->Auth->user(Roles\MODERATOR))) {
+                $moderator = $this->Auth->user(Roles\MODERATOR);
+            }
+            else {
+                $connection = ConnectionManager::get('default');
+                $connection->insert('moderators', ['user_id' => $this->Auth->user('id')]);
+
+
+                $this->updateUserRoles();
+                $moderator = $this->Auth->user(Roles\MODERATOR);
+
+            }   
+
+
+            if ($this->Forums->save($forum)) {
+                if ($this->Forums->ModeratorsForums->Moderators->addForum($moderator->moderator_id, $forum->id)) {
+                    $this->Flash->success(__('The forum has been saved and you have been made a moderator.'));
+                    return $this->redirect(['action' => 'index']);
+                }
+                else {
+                    $this->Flash->error(__('Could not make you a moderator. Please contact an admin.'));
+                }
             } else {
-                $this->Forums->delete($forum);
-                $this->Flash->error(__('An error has occurred. Please, try again.'));
+                $this->Flash->error(__('An error has occurred. Please try again.'));
             }
         }
         $this->set(compact('forum'));
         $this->set('_serialize', ['forum']);
+    }
+
+    // DEBUG remove
+    public function revokeModerator()
+    {
+        $connection = ConnectionManager::get('default');
+        $connection->delete('moderators', ['user_id' => $this->Auth->user('id')]);
+        return $this->redirect(['controller' => 'forums']);
     }
 
     /**

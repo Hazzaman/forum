@@ -17,5 +17,6 @@ class Thread extends Entity
     protected $_accessible = [
         '*' => true,
         'id' => false,
+        'forum_id' => false
     ];
 }

@@ -37,6 +37,7 @@ class ForumsTable extends Table
         
         $this->hasMany('ModeratorsForums', [
             'dependent' => true,
+            'cascadeCallbacks' => true,
             'foreignKey' => 'forum_id'
         ]);
     }

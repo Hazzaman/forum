@@ -5,12 +5,13 @@ use App\Model\Entity\ModeratorsForum;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 use Cake\Validation\Validator;
 
 /**
  * ModeratorsForums Model
  *
- * @property \Cake\ORM\Association\BelongsTo $Users
+ * @property \Cake\ORM\Association\BelongsTo $Moderators
  * @property \Cake\ORM\Association\BelongsTo $Forums
  */
 class ModeratorsForumsTable extends Table
@@ -63,8 +64,27 @@ class ModeratorsForumsTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->existsIn(['user_id'], 'Users'));
+        $rules->add($rules->existsIn(['moderator_id'], 'Moderators'));
         $rules->add($rules->existsIn(['forum_id'], 'Forums'));
         return $rules;
+    }
+
+    /**
+     * After delete hook method
+     * 
+     * Deletes the moderator if they have no rows in ModeratorsForums left
+     * @return void
+     */
+    public function afterDelete($event, $entity, $options)
+    {
+        $moderatorsTable = TableRegistry::get('moderators');
+
+        $moderator = $moderatorsTable->get($entity->moderator_id, [
+            'contain' => ['ModeratorsForums']
+        ]);
+
+        if (empty($moderator->moderators_forums))  {
+            $moderatorsTable->delete($moderator);
+        }
     }
 }

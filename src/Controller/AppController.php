@@ -18,6 +18,7 @@ use Cake\Controller\Controller;
 use Cake\Event\Event;
 use Cake\ORM\TableRegistry;
 require_once(APP . 'Model' . DS . 'Constants' . DS . 'Roles.php');
+use Constants\Roles;
 /**
  * Application Controller
  *
@@ -38,6 +39,14 @@ class AppController extends Controller
     public function initialize()
     {
         parent::initialize();
+        
+        //DEBUG
+        /*$mods = TableRegistry::get('Moderators');
+        debug($mods->find('all', ['contain' => ['ModeratorsForums']])->toArray());
+        
+        $forums = TableRegistry::get('Forums');
+        debug($forums->find('all', ['contain' => ['ModeratorsForums']])->toArray());*/
+        
         $this->loadComponent('Flash');
         
         $this->loadComponent('Auth', [
@@ -48,18 +57,37 @@ class AppController extends Controller
         // Anyone can access 'view' and 'index'
         $this->Auth->allow(['view', 'index']);
         
-        
-        // Add role data for the user to Auth->user array if user logged in
+        $this->updateUserRoles();
+        if (!is_null($this->Auth->user(Roles\ADMINISTRATOR))) {
+            $this->set('is_administrator', true);
+        }
+        else {
+            $this->set('is_administrator', false);
+        }
+
+    }
+
+    /**
+    * Update role status method
+    *
+    * Updates the user's roles in $this->Auth->user()
+    * @return boolean indicating success
+    */
+    public function updateUserRoles()
+    {
+        //debug($this->Auth->user());
         if (!is_null($this->Auth->user())) {
             $user_array = $this->Auth->user();
             $users = TableRegistry::get('users');
-            $roles = $users->getRoles($user_array['id']);
-            
-            $user_array = $user_array + $roles;
-            
+            $roles = $users->getRoles($user_array['id']); 
+
+            $user_array = $roles + $user_array;
+
             $this->Auth->setUser($user_array);
+            //debug($this->Auth->user());
+            return true;
         }
-        
+        return false;
     }
     
     /**
@@ -87,6 +115,25 @@ class AppController extends Controller
         }
     }
     
+    /** TODO
+    * Set is_moderator method
+    *
+    *
+    *
+    * @param int $forum_id Forum id
+    * @return void
+    */
+    public function setIsModerator($forum_id)
+    {
+        $user = $this->Auth->user();
+        if (isset($user[Roles\MODERATOR]) && $user[Roles\MODERATOR]->isModeratingForum($forum_id)) {
+            $this->set('is_moderator', true);
+        }
+        else {
+            $this->set('is_moderator', false);
+        }
+    }
+
     /**
      * Before Rendering hook method.
      *

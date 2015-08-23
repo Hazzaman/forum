@@ -11,9 +11,9 @@
 <div class="threads form large-10 medium-9 columns">
     <?= $this->Form->create($thread) ?>
     <fieldset>
+        <h5 class="subheader">Forum: <?= $forum->title ?></h5>
         <legend><?= __('Add Thread') ?></legend>
         <?php
-            echo $this->Form->input('forum_id', ['options' => $forums]);
             echo $this->Form->input('title');
         ?>
     </fieldset>

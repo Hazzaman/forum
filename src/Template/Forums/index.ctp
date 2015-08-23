@@ -10,10 +10,13 @@
     <table cellpadding="0" cellspacing="0">
     <thead>
         <tr>
+            
             <th><?= $this->Paginator->sort('id') ?></th>
             <th><?= $this->Paginator->sort('title') ?></th>
             <th><?= $this->Paginator->sort('created') ?></th>
-            <th class="actions"><?= __('Actions') ?></th>
+            <?php if (isset($userData['administrator'])): ?>
+                <th class="actions"><?= __('Actions') ?></th>
+            <?php endif; ?>
         </tr>
     </thead>
     <tbody>
@@ -22,10 +25,12 @@
             <td><?= $this->Number->format($forum->id) ?></td>
             <td><?= $this->Html->link(__($forum->title), ['action' => 'view', $forum->id]) ?></td>
             <td><?= h($forum->created) ?></td>
-            <td class="actions">
-                <?= $this->Html->link(__('Edit'), ['action' => 'edit', $forum->id]) ?>
-                <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $forum->id], ['confirm' => __('Are you sure you want to delete # {0}?', $forum->id)]) ?>
-            </td>
+            <?php if (isset($userData['administrator'])): ?>
+                <td class="actions">
+                    <?= $this->Html->link(__('Edit'), ['action' => 'edit', $forum->id]) ?>
+                    <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $forum->id], ['confirm' => __('Are you sure you want to delete # {0}?', $forum->id)]) ?>
+                </td>
+            <?php endif; ?>
         </tr>
 
     <?php endforeach; ?>

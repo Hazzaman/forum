@@ -19,7 +19,6 @@
     <fieldset>
         <legend><?= __('Edit Thread') ?></legend>
         <?php
-            echo $this->Form->input('forum_id', ['options' => $forums]);
             echo $this->Form->input('title');
         ?>
     </fieldset>

@@ -15,8 +15,6 @@
         <div class="large-5 columns strings">
             <h6 class="subheader"><?= __('Username') ?></h6>
             <p><?= h($user->username) ?></p>
-            <h6 class="subheader"><?= __('Password') ?></h6>
-            <p><?= h($user->password) ?></p>
             <h6 class="subheader"><?= __('Email') ?></h6>
             <p><?= h($user->email) ?></p>
             
@@ -82,11 +80,11 @@
                 <th><?= __('Title') ?></th>
                 <th><?= __('Created') ?></th>
             </tr>
-            <?php foreach ($user->moderator->forums as $forum): ?>
+            <?php foreach ($user->moderator->moderators_forums as $mods_forums): ?>
                 <tr>
-                  <td><?= h($forum->id) ?></td>
-                  <td> <?= $this->Html->link(__($forum->title), ['controller' => 'Forum', 'action' => 'view', $forum->id]) ?></td>
-                  <td><?= h($forum->created) ?></td>
+                  <td><?= h($mods_forums->forum->id) ?></td>
+                  <td> <?= $this->Html->link(__($mods_forums->forum->title), ['controller' => 'Forums', 'action' => 'view', $mods_forums->forum->id]) ?></td>
+                  <td><?= h($mods_forums->forum->created) ?></td>
                 </tr>
             <?php endforeach; ?>
         </table>

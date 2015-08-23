@@ -18,7 +18,8 @@
         <legend><?= __('Edit User') ?></legend>
         <?php
             echo $this->Form->input('username');
-            echo $this->Form->input('password');
+            echo $this->Form->input('password', ['value' => '', 'label' => 'New Password']);
+            echo $this->Form->input('password_confirm', ['type' => 'password', 'required' => true, 'label' => 'Confirm New Password']);
             echo $this->Form->input('email');
         ?>
     </fieldset>

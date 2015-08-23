@@ -13,6 +13,7 @@
         <?php
             echo $this->Form->input('username');
             echo $this->Form->input('password');
+            echo $this->Form->input('password_confirm', ['type' => 'password', 'required' => true]);
             echo $this->Form->input('email');
         ?>
     </fieldset>
