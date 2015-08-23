@@ -46,36 +46,47 @@ class GeneratorController extends AppController
         
         
         $amount = 10;
+        $user_ids = [];
         for ($i = 0; $i <= $amount; $i++) {
             $user = $users->newEntity([
-                'username' => $gen->userName(),
-                'password' => $gen->password(),
-                'email' => $gen->email()
-            ]);
+                    'username' => $gen->userName(),
+                    'password' => $gen->password(),
+                    'email' => $gen->email()
+                ]);
             $users->save($user);
+            array_push($user_ids, $user->id);
+        }
+        for ($i = 0; $i <= 1; $i++) {
             
             $forum = $forums->newEntity([
-                'title' => $gen->realText(15)
+                'title' => $gen->realText(30)
             ]);
             $forums->save($forum);
             
-            $thread = $threads->newEntity([
-                'forum_id' => $gen->numberBetween(1, sizeof($forums->find()->execute())),
-                'title' => $gen->realText(85)
-            ]);
-            $threads->save($thread);
-            
-            for ($j = 0; $j <= $amount; $j++) {
-                $comment = $comments->newEntity([
+            for ($k = 0; $k <= $amount; $k++) {
+                $thread = $threads->newEntity([
+                    'title' => $gen->realText(85)
+                ]);
+                $thread->forum_id = $forum->id;
+                $threads->save($thread);
+                
+                for ($j = 0; $j <= $amount; $j++) {
+                    $comment = $comments->newEntity([
+                        'text' => $gen->realText(255)
+                    ]);
+                    /*
+                    
                     'thread_id' => $gen->numberBetween(1, sizeof($threads->find()->execute())),
                     'user_id' => $gen->numberBetween(1, sizeof($users->find()->execute())),
-                    'text' => $gen->realText(255)
-                ]);
-                $comments->save($comment);
+                        */
+                    $comment->thread_id = $thread->id;
+                    $comment->user_id = $user_ids[$j];
+                    $comments->save($comment);
+                }
             }
         }
         
-        return $this->redirect(['controller' => 'Users']);
+        return $this->redirect(['controller' => 'Forums']);
     }
     
     /**
@@ -87,6 +98,12 @@ class GeneratorController extends AppController
      */
     public function delete()
     {
+        $query = TableRegistry::get('ModeratorsForums');
+        $query->deleteAll([]);
+        $query = TableRegistry::get('Moderators');
+        $query->deleteAll([]);
+        $query = TableRegistry::get('Administrators');
+        $query->deleteAll([]);
         $query = TableRegistry::get('Comments');
         $query->deleteAll([]);
         $query = TableRegistry::get('Threads');
