@@ -9,7 +9,6 @@ use Cake\ORM\TableRegistry;
 use Cake\Validation\Validator;
 
 use Constants\Roles;
-
 /**
  * Users Model
  *
@@ -17,7 +16,6 @@ use Constants\Roles;
  */
 class UsersTable extends Table
 {
-    const ROLE_TABLES = ['Administrators', 'Moderators' => ['ModeratorsForums' => ['Forums']]];
     /**
      * Initialize method
      *
@@ -57,7 +55,7 @@ class UsersTable extends Table
      */
      public function getRoles($primaryKey)
      {
-        $user = $this->get($primaryKey, ['contain' => $this::ROLE_TABLES]);
+        $user = $this->get($primaryKey, ['contain' => ['Administrators', 'Moderators' => ['ModeratorsForums' => ['Forums']]]]);
         // DONT DRY
         $user_roles = [Roles\ADMINISTRATOR => $user->administrator, Roles\MODERATOR => $user->moderator];
         #debug($user_roles);
