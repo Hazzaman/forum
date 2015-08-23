@@ -1,4 +1,8 @@
+# THIS IS THE GITHUB README NOT FOR THE SUBMITTED FILES
+# These steps have already been performed on the files used for final submission
 # Forum web application
+
+## Setup using this repo
 This github repo doesn't contain config/app.php as this contains database passwords
     (Must be created from config/app.default.php)
 
@@ -8,23 +12,6 @@ Composer has been used for managing dependencies
 
 Run 'php composer.phar install' to install the required dependencies from the composer.json file
 For composer to install cakephp 3 the php intl extension is requried
-    Ubuntu: (sudo apt-get install php5-intl)
+    Ubuntu: (sudo apt-get install php5-intl) and you must restart apache2
     or (https://secure.php.net/manual/en/intl.installation.php)
     
-## Installation
-
-1. Download [Composer](http://getcomposer.org/doc/00-intro.md) or update `composer self-update`.
-2. Run `php composer.phar create-project --prefer-dist cakephp/app [app_name]`.
-
-If Composer is installed globally, run
-```bash
-composer create-project --prefer-dist cakephp/app [app_name]
-```
-
-You should now be able to visit the path to where you installed the app and see
-the setup traffic lights.
-
-## Configuration
-
-Read and edit `config/app.php` and setup the 'Datasources' and any other
-configuration relevant for your application.
