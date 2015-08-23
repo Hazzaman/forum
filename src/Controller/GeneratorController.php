@@ -7,6 +7,8 @@ use Cake\ORM\Table;
 use Faker\Factory;
 use Cake\Datasource\ConnectionManager;
 
+use Constants\Roles;
+
 /**
  * Generator Controller
  */
@@ -53,13 +55,13 @@ class GeneratorController extends AppController
             $users->save($user);
             
             $forum = $forums->newEntity([
-                'title' => $gen->realText(100)
+                'title' => $gen->realText(15)
             ]);
             $forums->save($forum);
             
             $thread = $threads->newEntity([
                 'forum_id' => $gen->numberBetween(1, sizeof($forums->find()->execute())),
-                'title' => $gen->realText(100)
+                'title' => $gen->realText(85)
             ]);
             $threads->save($thread);
             
