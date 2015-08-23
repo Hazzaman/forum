@@ -1,10 +1,16 @@
-# CakePHP Application Skeleton
+# Forum web application
+This github repo doesn't contain config/app.php as this contains database passwords
+    (Must be created from config/app.default.php)
 
-[![Build Status](https://api.travis-ci.org/cakephp/app.png)](https://travis-ci.org/cakephp/app)
-[![License](https://poser.pugx.org/cakephp/app/license.svg)](https://packagist.org/packages/cakephp/app)
+It also doesn't contain the vender/ dir which is where the cakephp framework is actually stored.
+Composer has been used for managing dependencies 
+    (https://getcomposer.org/doc/00-intro.md#installation-linux-unix-osx)
 
-A skeleton for creating applications with [CakePHP](http://cakephp.org) 3.0.
-
+Run 'php composer.phar install' to install the required dependencies from the composer.json file
+For composer to install cakephp 3 the php intl extension is requried
+    Ubuntu: (sudo apt-get install php5-intl)
+    or (https://secure.php.net/manual/en/intl.installation.php)
+    
 ## Installation
 
 1. Download [Composer](http://getcomposer.org/doc/00-intro.md) or update `composer self-update`.

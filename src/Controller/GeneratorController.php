@@ -12,7 +12,23 @@ use Cake\Datasource\ConnectionManager;
  */
 class GeneratorController extends AppController
 {
-
+    
+    /**
+     * Authorization method
+     * 
+     * @return boolean if user is authorized for the requested action
+     */
+    public function isAuthorized($user = null) 
+    {
+        $user = $this->Auth->user();
+        if (!is_null($user[Roles\ADMINISTRATOR])) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    
     /**
      * Generator New Records method
      *
