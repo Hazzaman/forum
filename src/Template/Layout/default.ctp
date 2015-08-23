@@ -40,11 +40,15 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
             <span><?= $this->fetch('title') ?></span>
         </div>
         <div class="header-help">
-            <span><a target="_blank" href="http://book.cakephp.org/3.0/">Documentation</a></span>
-            <span><a target="_blank" href="http://api.cakephp.org/3.0/">API</a></span>
+            <span><a href="<?= $this->Url->build(['controller' => 'Forums', 'action' => 'index']);?>">Forums</a></span>
             <?php if ($is_administrator): ?>
-              <span><a href="<?= $this->Url->build(['controller' => 'generator', 'action' => 'newRecords']);?>">New Records</a></span>
-              <span><a href="<?= $this->Url->build(['controller' => 'generator', 'action' => 'delete']);?>">Delete Records</a></span>
+                <span><a href="<?= $this->Url->build(['controller' => 'Threads', 'action' => 'index']);?>">Threads</a></span>
+                <span><a href="<?= $this->Url->build(['controller' => 'Comments', 'action' => 'index']);?>">Comments</a></span>
+                <span><a href="<?= $this->Url->build(['controller' => 'Users', 'action' => 'index']);?>">Users</a></span>
+                <span><a href="<?= $this->Url->build(['controller' => 'Moderators', 'action' => 'index']);?>">Moderators</a></span>
+                <span></span>
+                <span><a href="<?= $this->Url->build(['controller' => 'generator', 'action' => 'newRecords']);?>">New Records</a></span>
+                <span><a href="<?= $this->Url->build(['controller' => 'generator', 'action' => 'delete']);?>">Delete Records</a></span>
             <?php endif; ?>
             
             <?php if (isset($userData)) { ?>

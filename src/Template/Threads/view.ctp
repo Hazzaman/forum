@@ -1,17 +1,11 @@
 <?= $this->assign('title', 'Thread'); ?>
-<!--<div class="actions columns large-2 medium-3">
+<div class="actions columns large-2 medium-3">
     <h3><?= __('Actions') ?></h3>
     <ul class="side-nav">
-        <li><?= $this->Html->link(__('Edit Thread'), ['action' => 'edit', $thread->id]) ?> </li>
-        <li><?= $this->Form->postLink(__('Delete Thread'), ['action' => 'delete', $thread->id], ['confirm' => __('Are you sure you want to delete # {0}?', $thread->id)]) ?> </li>
-        <li><?= $this->Html->link(__('List Threads'), ['action' => 'index']) ?> </li>
-        <li><?= $this->Html->link(__('New Thread'), ['action' => 'add']) ?> </li>
-        <li><?= $this->Html->link(__('List Forums'), ['controller' => 'Forums', 'action' => 'index']) ?> </li>
-        <li><?= $this->Html->link(__('New Forum'), ['controller' => 'Forums', 'action' => 'add']) ?> </li>
-        <li><?= $this->Html->link(__('List Comments'), ['controller' => 'Comments', 'action' => 'index']) ?> </li>
-        <li><?= $this->Html->link(__('New Comment'), ['controller' => 'Comments', 'action' => 'add']) ?> </li>
+        <li><?= $this->Html->link(__('List Forums'), ['controller' => 'Forums', 'action' => 'index']) ?></li>
+        <li><?= $this->Html->link(__('New Comment'), ['controller' => 'Comments', 'action' => 'add', $thread->id]) ?> </li>
     </ul>
-</div>-->
+</div>
 <div class="threads view large-10 medium-9 columns">
     <h6><?= $this->Html->link($thread->forum->title, ['controller' => 'Forums', 'action' => 'view', $thread->forum->id]) ?></h6>
     <h2><?= h($thread->title) ?></h2>
@@ -30,7 +24,6 @@
         </div>-->
     </div>
 </div>
-<?= $this->Html->link(__('New Comment'), ['controller' => 'comments', 'action' => 'add', $thread->id]) ?>
 <div class="related row">
     <div class="column large-12">
     <!--<h4 class="subheader"><?= __('Related Comments') ?></h4>-->

@@ -8,6 +8,7 @@
         <li><?= $this->Html->link(__('List Forums'), ['action' => 'index']) ?> </li>
         <li><?= $this->Html->link(__('New Forum'), ['action' => 'add']) ?> </li>
         <li><?= $this->Html->link(__('List Threads'), ['controller' => 'Threads', 'action' => 'index']) ?> </li>-->
+        <li><?= $this->Html->link(__('List Forums'), ['controller' => 'Forums', 'action' => 'index']) ?></li>
         <li><?= $this->Html->link(__('New Thread'), ['controller' => 'Threads', 'action' => 'add', $forum->id]) ?> </li>
         <?php if ($is_moderator || $is_administrator): ?>
             <li><?= $this->Html->link(__('Edit Forum'), ['controller' => 'Forums', 'action' => 'edit', $forum->id]) ?> </li>
@@ -71,7 +72,9 @@
 </div>
 <div class="moderators">
 <h4 class="subheader">Moderators</h4>
-
+<?php if (empty($forum->moderators_forums)):?>
+<span>No Moderators</span>
+<?php endif; ?>
 <?php foreach ($forum->moderators_forums as $mods_forums):?>
     <span><?= $this->Html->link($mods_forums->moderator->user->username, ['controller' => 'Users', 'action' => 'view', $mods_forums->moderator->user->id]) ?></span> <br/>
 <?php endforeach; ?>
